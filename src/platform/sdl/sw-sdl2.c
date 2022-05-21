@@ -9,6 +9,13 @@
 #include <mgba/core/thread.h>
 #include <mgba/core/version.h>
 
+#ifndef MGBA_SDL_WINDOW_FLAG
+#define MGBA_SDL_WINDOW_FLAG		SDL_WINDOW_OPENGL | (SDL_WINDOW_FULLSCREEN_DESKTOP * renderer->player.fullscreen)
+#endif
+#ifndef MGBA_SDL_RENDERER_FLAG
+#define MGBA_SDL_RENDERER_FLAG		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+#endif
+
 static bool mSDLSWInit(struct mSDLRenderer* renderer);
 static void mSDLSWRunloop(struct mSDLRenderer* renderer, void* user);
 static void mSDLSWDeinit(struct mSDLRenderer* renderer);
@@ -22,10 +29,10 @@ void mSDLSWCreate(struct mSDLRenderer* renderer) {
 bool mSDLSWInit(struct mSDLRenderer* renderer) {
 	unsigned width, height;
 	renderer->core->desiredVideoDimensions(renderer->core, &width, &height);
-	renderer->window = SDL_CreateWindow(projectName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, renderer->viewportWidth, renderer->viewportHeight, SDL_WINDOW_OPENGL | (SDL_WINDOW_FULLSCREEN_DESKTOP * renderer->player.fullscreen));
+	renderer->window = SDL_CreateWindow(projectName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, renderer->viewportWidth, renderer->viewportHeight, MGBA_SDL_WINDOW_FLAG);
 	SDL_GetWindowSize(renderer->window, &renderer->viewportWidth, &renderer->viewportHeight);
 	renderer->player.window = renderer->window;
-	renderer->sdlRenderer = SDL_CreateRenderer(renderer->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer->sdlRenderer = SDL_CreateRenderer(renderer->window, -1, MGBA_SDL_RENDERER_FLAG);
 #ifdef COLOR_16_BIT
 #ifdef COLOR_5_6_5
 	renderer->sdlTex = SDL_CreateTexture(renderer->sdlRenderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
@@ -59,6 +66,11 @@ void mSDLSWRunloop(struct mSDLRenderer* renderer, void* user) {
 			int stride;
 			SDL_LockTexture(renderer->sdlTex, 0, (void**) &renderer->outputBuffer, &stride);
 			renderer->core->setVideoBuffer(renderer->core, renderer->outputBuffer, stride / BYTES_PER_PIXEL);
+		} else {
+#ifdef __VSF__
+			// delay 10ms to avoid this thread take all cpu
+			usleep(10 * 1000);
+#endif
 		}
 		mCoreSyncWaitFrameEnd(&context->impl->sync);
 	}

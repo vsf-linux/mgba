@@ -7,7 +7,8 @@
 
 #ifdef MY_CPU_X86_OR_AMD64
 #if (_MSC_VER > 1500) || (_MSC_FULL_VER >= 150030729)
-#define USE_INTEL_AES
+// TODO: no idea why compiler error with USE_INTEL_AES defined
+//#define USE_INTEL_AES
 #endif
 #endif
 

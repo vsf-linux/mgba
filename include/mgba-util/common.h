@@ -6,6 +6,34 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#ifdef __VSF__
+
+#undef _WIN32
+#undef _MSC_VER
+
+#define HAVE_STRDUP
+#define HAVE_STRLCPY
+#define HAVE_LOCALTIME_R
+#define HAVE_CRC32
+#define USE_PTHREADS
+#define USE_ZLIB
+#define USE_LZMA
+
+// define __STDC_VERSION__ to C99 to avoid ThreadLocal
+#undef __STDC_VERSION__
+#define __STDC_VERSION__ 199901L
+
+#define MGBA_SDL_WINDOW_FLAG 0
+#define MGBA_SDL_RENDERER_FLAG 0
+#define M_CORE_GBA
+#define M_CORE_GB
+
+// TODO: enable to support RGB565 screen
+//#define COLOR_16_BIT
+//#define COLOR_5_6_5
+
+#endif
+
 #ifdef __cplusplus
 #define CXX_GUARD_START extern "C" {
 #define CXX_GUARD_END }
