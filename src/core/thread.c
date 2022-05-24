@@ -81,6 +81,9 @@ static void _waitEpilogue(struct mCoreThreadInternal* threadContext, bool videoF
 
 static void _wait(struct mCoreThreadInternal* threadContext) {
 	MutexUnlock(&threadContext->stateMutex);
+#ifdef __VSF__
+	usleep(10 * 1000);
+#endif
 
 	if (!MutexTryLock(&threadContext->sync.videoFrameMutex)) {
 		ConditionWake(&threadContext->sync.videoFrameRequiredCond);
