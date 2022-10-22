@@ -12,6 +12,7 @@
 #undef _MSC_VER
 
 #define HAVE_STRDUP
+#define HAVE_STRNDUP
 #define HAVE_STRLCPY
 #define HAVE_LOCALTIME_R
 #define HAVE_CRC32
