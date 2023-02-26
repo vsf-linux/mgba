@@ -4,6 +4,11 @@
 #ifndef __7Z_TYPES_H
 #define __7Z_TYPES_H
 
+#ifdef __VSF__
+#undef _WIN32
+#undef _MSC_VER
+#endif
+
 #ifdef _WIN32
 /* #include <windows.h> */
 #endif
